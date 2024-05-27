@@ -1,5 +1,5 @@
+use crate::daily_table::DailyTable;
 use crate::pie_chart::PieChart;
-use egui_extras::{Size, StripBuilder};
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -11,26 +11,35 @@ pub struct WrapApp {
     #[serde(skip)] // This how you opt-out of serialization of a field
     value: f32,
     pie_chart: PieChart,
+    daily_table: DailyTable,
 }
 
 impl Default for WrapApp {
     fn default() -> Self {
-        // let data: Vec<_> = (0..8).map(|i| (0.125, format!("{}: 12.5%", i + 1))).collect();
-
-        let pie_chart = PieChart::new("Percents", &[(14.58 + 48.13, "Nvidia"), (23.42, "Apple"), (22.28, "Amazon") , (20.62 + 18.26, "Microsoft"), (33.97, "TSMC")]);
-
+        let pie_chart = PieChart::new(
+            "Percents",
+            &[
+                (14.58 + 48.13, "Nvidia"),
+                (23.42, "Apple"),
+                (22.28, "Amazon"),
+                (20.62 + 18.26, "Microsoft"),
+                (33.97, "TSMC"),
+            ],
+        );
+        let daily_table = DailyTable::new();
         Self {
             // Example stuff:
             label: "Hello World!".to_owned(),
             value: 2.7,
             pie_chart,
+            daily_table,
         }
     }
 }
 
 impl WrapApp {
     /// Called once before the first frame.
-    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+    pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         // This is also where you can customize the look and feel of egui using
         // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
 
@@ -49,10 +58,7 @@ impl eframe::App for WrapApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Put your widgets into a `SidePanel`, `TopBottomPanel`, `CentralPanel`, `Window` or `Area`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
-
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            // The top panel is often a good place for a menu bar:
-
             egui::menu::bar(ui, |ui| {
                 // NOTE: no File->Quit on web pages!
                 // let is_web = cfg!(target_arch = "wasm32");
@@ -70,28 +76,35 @@ impl eframe::App for WrapApp {
             });
         });
 
-
-
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(ctx, |_ui| {
             egui::Window::new("chart")
                 .open(&mut true)
                 .collapsible(false)
-                .interactable(false)
-
-                .title_bar(false)
+                // .interactable(false)
+                // .title_bar(false)
                 .vscroll(false)
                 .hscroll(false)
-                .resizable(true)
-                // .default_size([300.0, 350.0])
+                .resizable(false)
+                .default_size([200.0, 350.0])
                 .show(ctx, |ui| {
                     self.pie_chart.show(ui);
                 });
-
+            egui::Window::new("Daily")
+                .open(&mut true)
+                .collapsible(false)
+                // .interactable(false)
+                // .title_bar(false)
+                .vscroll(false)
+                .hscroll(false)
+                .resizable(false)
+                .show(ctx, |ui| {
+                    self.daily_table.show(ui);
+                });
         });
     }
 
     /// Called by the frame work to save state before shutdown.
-    fn save(&mut self, storage: &mut dyn eframe::Storage) {
+    fn save(&mut self, _storage: &mut dyn eframe::Storage) {
         // eframe::set_value(storage, eframe::APP_KEY, self);
     }
 }

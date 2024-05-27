@@ -1,11 +1,10 @@
 use std::f64::consts::TAU;
 
-use egui_plot::{Legend, Plot, PlotPoint, PlotPoints, Polygon, Text};
 use egui::{Align2, RichText};
+use egui_plot::{Legend, Plot, PlotPoint, PlotPoints, Polygon, Text};
 
 const FULL_CIRCLE_VERTICES: f64 = 240.0;
 const RADIUS: f64 = 1.0;
-
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -66,7 +65,7 @@ impl PieChart {
             .data_aspect(1.0)
             .show_x(false)
             .show_y(false)
-            .show_grid([false;2])
+            .show_grid([false; 2])
             // .set_margin_fraction([0.7; 2].into()) // this won't prevent the plot from moving
             // `include_*` will lock it into place
             // .include_x(-2.0)
@@ -75,10 +74,17 @@ impl PieChart {
             // .include_y(2.0)
             .show(ui, |plot_ui| {
                 for sector in sectors.into_iter() {
-                    let highlight = plot_ui.pointer_coordinate().map(|p| sector.contains(&p)).unwrap_or_default();
+                    let highlight = plot_ui
+                        .pointer_coordinate()
+                        .map(|p| sector.contains(&p))
+                        .unwrap_or_default();
                     let Sector { name, points, .. } = sector;
 
-                    plot_ui.polygon(Polygon::new(PlotPoints::new(points)).name(&name).highlight(highlight));
+                    plot_ui.polygon(
+                        Polygon::new(PlotPoints::new(points))
+                            .name(&name)
+                            .highlight(highlight),
+                    );
 
                     if highlight {
                         let p = plot_ui.pointer_coordinate().unwrap();
@@ -103,7 +109,7 @@ struct Sector {
 
 impl Default for Sector {
     fn default() -> Self {
-        Sector::new("default", 0., 1. ,FULL_CIRCLE_VERTICES as usize , 0. )
+        Sector::new("default", 0., 1., FULL_CIRCLE_VERTICES as usize, 0.)
     }
 }
 impl Sector {
