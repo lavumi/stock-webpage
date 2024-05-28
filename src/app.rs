@@ -1,36 +1,42 @@
 use crate::daily_table::DailyTable;
+use crate::data_reader::PortfolioRawData;
 use crate::pie_chart::PieChart;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct WrapApp {
-    // Example stuff:
-    label: String,
-
-    #[serde(skip)] // This how you opt-out of serialization of a field
-    value: f32,
     pie_chart: PieChart,
     daily_table: DailyTable,
 }
 
 impl Default for WrapApp {
     fn default() -> Self {
-        let pie_chart = PieChart::new(
-            "Percents",
-            &[
-                (14.58 + 48.13, "Nvidia"),
-                (23.42, "Apple"),
-                (22.28, "Amazon"),
-                (20.62 + 18.26, "Microsoft"),
-                (33.97, "TSMC"),
-            ],
-        );
-        let daily_table = DailyTable::new();
+        let pf_data = PortfolioRawData::new();
+
+        let pie_chart_data: Vec<(f64, String)> = pf_data
+            .pie_chart
+            .iter()
+            .map(|data| (data.owned as f64 * data.price, data.symbol.to_string()))
+            .collect();
+
+        let pie_chart = PieChart::new("Percents", &pie_chart_data);
+
+        let daily_table_data: Vec<(String, String, f64, f64)> = pf_data
+            .daily
+            .iter()
+            .map(|data| {
+                (
+                    data.symbol.to_string(),
+                    data.index.to_string(),
+                    data.price,
+                    data.change,
+                )
+            })
+            .collect();
+
+        let daily_table = DailyTable::new("daily", &daily_table_data);
         Self {
-            // Example stuff:
-            label: "Hello World!".to_owned(),
-            value: 2.7,
             pie_chart,
             daily_table,
         }
@@ -70,33 +76,34 @@ impl eframe::App for WrapApp {
                 //     });
                 //     ui.add_space(16.0);
                 // }
-
                 egui::widgets::global_dark_light_mode_switch(ui);
                 ui.separator();
+
+                if ui.button("Organize windows").clicked() {
+                    ui.ctx().memory_mut(|mem| mem.reset_areas());
+                }
             });
         });
 
-        egui::CentralPanel::default().show(ctx, |_ui| {
+        egui::CentralPanel::default().show(ctx, |_| {
             egui::Window::new("chart")
                 .open(&mut true)
                 .collapsible(false)
-                // .interactable(false)
-                // .title_bar(false)
                 .vscroll(false)
                 .hscroll(false)
                 .resizable(false)
-                .default_size([200.0, 350.0])
+                .fixed_size([600.0, 400.0])
                 .show(ctx, |ui| {
                     self.pie_chart.show(ui);
                 });
+
             egui::Window::new("Daily")
                 .open(&mut true)
                 .collapsible(false)
-                // .interactable(false)
-                // .title_bar(false)
                 .vscroll(false)
                 .hscroll(false)
-                .resizable(false)
+                // .resizable(false)
+                // .fixed_size([300.0, 400.0])
                 .show(ctx, |ui| {
                     self.daily_table.show(ui);
                 });

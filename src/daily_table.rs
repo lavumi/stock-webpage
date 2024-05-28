@@ -1,56 +1,88 @@
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 pub struct DailyTable {
+    name: String,
     stocks: Vec<Stock>,
 }
 
 impl Default for DailyTable {
     fn default() -> Self {
-        let default_stock = Stock::default();
-        let stocks = vec![default_stock];
-        Self { stocks }
+        let stocks = vec![];
+        let name = "default";
+        Self {
+            stocks,
+            name: name.to_string(),
+        }
     }
 }
 
 impl DailyTable {
-    pub fn new() -> Self {
-        let default_stock = Stock::default();
+    pub fn new<S: AsRef<str>, L: AsRef<str>>(name: S, data: &[(L, L, f64, f64)]) -> Self {
         let mut stocks = vec![];
-        for _ in 0..10 {
-            stocks.push(default_stock.clone());
+        for stock in data {
+            stocks.push(Stock::new(
+                stock.0.as_ref(),
+                stock.1.as_ref(),
+                stock.2,
+                stock.3,
+            ))
         }
-        // let stocks = vec![default_stock,default_stock,default_stock,default_stock,default_stock,default_stock,default_stock,default_stock,default_stock,default_stock];
         log::info!("{}", stocks.len());
-        Self { stocks }
+        Self {
+            name: name.as_ref().to_string(),
+            stocks,
+        }
     }
     pub fn show(&mut self, ui: &mut egui::Ui) {
         for stock in &self.stocks {
             ui.columns(2, |columns| {
                 columns[0].horizontal(|ui| {
                     ui.vertical(|ui| {
-                        ui.label(egui::RichText::new(stock.market_name.clone()).strong());
-                        ui.label(egui::RichText::new(stock.index_name.clone()).small());
+                        ui.label(
+                            egui::RichText::new(stock.market_name.clone())
+                                .size(16.0)
+                                .strong(),
+                        );
+                        ui.label(
+                            egui::RichText::new(stock.index_name.clone())
+                                .size(12.0)
+                                .small(),
+                        );
                     });
                 });
                 columns[1].horizontal_wrapped(|ui| {
                     ui.vertical(|ui| {
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
-                            ui.label(egui::RichText::new(stock.index_value.clone()).strong());
+                            ui.label(
+                                egui::RichText::new(stock.index_value.clone())
+                                    .size(16.0)
+                                    .strong(),
+                            );
                         });
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
-                            ui.label(
-                                egui::RichText::new(stock.index_change.clone())
-                                    .small()
-                                    .color(egui::Color32::GREEN),
-                            );
+                            if stock.index_change > 0. {
+                                let text = format!("+{}%", stock.index_change);
+                                ui.label(
+                                    egui::RichText::new(text)
+                                        .size(12.0)
+                                        .small()
+                                        .color(egui::Color32::GREEN),
+                                );
+                            } else {
+                                let text = format!("{}%", stock.index_change);
+                                ui.label(
+                                    egui::RichText::new(text)
+                                        .size(12.0)
+                                        .small()
+                                        .color(egui::Color32::RED),
+                                );
+                            };
                         });
                     });
                 });
             });
-
-            ui.add_space(10.0);
+            ui.separator();
         }
-        // log::info!("{}" ,self.stocks.len());
     }
 }
 
@@ -60,7 +92,7 @@ pub struct Stock {
     market_name: String,
     index_name: String,
     index_value: String,
-    index_change: String,
+    index_change: f64,
 }
 
 impl Default for Stock {
@@ -80,7 +112,7 @@ impl Stock {
             market_name: market_name.as_ref().to_string(),
             index_name: index_name.as_ref().to_string(),
             index_value: index_value.to_string(),
-            index_change: format!("+{}%", index_change),
+            index_change,
         }
     }
 }

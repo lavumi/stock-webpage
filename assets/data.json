@@ -1,0 +1,67 @@
+{
+  "pie_chart": [
+    {
+      "symbol": "NVDA",
+      "owned": 43,
+      "price": 1069.0700,
+      "cost": 493.1124
+    },
+    {
+      "symbol": "APPL",
+      "owned": 90,
+      "price": 189.9500,
+      "cost": 118.2552
+    },
+    {
+      "symbol": "AMZN",
+      "owned": 90,
+      "price": 430.3250,
+      "cost": 1417.5700
+    },
+    {
+      "symbol": "MSFT",
+      "owned": 66,
+      "price": 430.3250,
+      "cost": 366.2755
+    },
+    {
+      "symbol": "TSMC",
+      "owned": 155,
+      "price": 160.0100,
+      "cost": 157.7900
+    }
+  ],
+  "daily" : [
+    {
+      "symbol": "NVDA",
+      "index": "NVIDIA Corporation",
+      "price": 1069.0700,
+      "change": 2.57
+    },
+    {
+      "symbol": "APPL",
+      "price": 189.9500,
+      "index": "Apple Inc.",
+      "change": 1.66
+    },
+    {
+      "symbol": "AMZN",
+      "price": 430.3250,
+      "index": "Amazon.com, Inc.",
+      "change": -0.17
+    },
+    {
+      "symbol": "MSFT",
+      "price": 430.3250,
+      "index": "Microsoft Corporation",
+      "change": 0.74
+    },
+    {
+      "symbol": "TSMC",
+      "price": 160.0100,
+      "index": "Taiwan Semiconductor Manufacturing",
+      "change": 1.85
+    }
+  ]
+
+}
