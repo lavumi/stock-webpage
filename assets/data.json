@@ -15,8 +15,8 @@
     {
       "symbol": "AMZN",
       "owned": 90,
-      "price": 430.3250,
-      "cost": 1417.5700
+      "price": 181.3250,
+      "cost": 147.5700
     },
     {
       "symbol": "MSFT",
@@ -46,7 +46,7 @@
     },
     {
       "symbol": "AMZN",
-      "price": 430.3250,
+      "price": 181.3250,
       "index": "Amazon.com, Inc.",
       "change": -0.17
     },
@@ -59,7 +59,7 @@
     {
       "symbol": "TSMC",
       "price": 160.0100,
-      "index": "Taiwan Semiconductor Manufacturing",
+      "index": "Taiwan Semicondu...",
       "change": 1.85
     }
   ]

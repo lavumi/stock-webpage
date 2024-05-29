@@ -1,6 +1,4 @@
-use crate::daily_table::DailyTable;
-use crate::data_reader::PortfolioRawData;
-use crate::pie_chart::PieChart;
+use crate::modules::*;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -8,6 +6,7 @@ use crate::pie_chart::PieChart;
 pub struct WrapApp {
     pie_chart: PieChart,
     daily_table: DailyTable,
+    line_chart: LineChart,
 }
 
 impl Default for WrapApp {
@@ -36,9 +35,12 @@ impl Default for WrapApp {
             .collect();
 
         let daily_table = DailyTable::new("daily", &daily_table_data);
+
+        let line_chart = LineChart::new("dollar", pf_data.usd_krw);
         Self {
             pie_chart,
             daily_table,
+            line_chart,
         }
     }
 }
@@ -92,7 +94,7 @@ impl eframe::App for WrapApp {
                 .vscroll(false)
                 .hscroll(false)
                 .resizable(false)
-                .fixed_size([600.0, 400.0])
+                .fixed_size([550.0, 400.0])
                 .show(ctx, |ui| {
                     self.pie_chart.show(ui);
                 });
@@ -103,9 +105,19 @@ impl eframe::App for WrapApp {
                 .vscroll(false)
                 .hscroll(false)
                 // .resizable(false)
-                // .fixed_size([300.0, 400.0])
+                .fixed_size([300.0, 400.0])
                 .show(ctx, |ui| {
                     self.daily_table.show(ui);
+                });
+            egui::Window::new("Dollar")
+                .open(&mut true)
+                .collapsible(false)
+                .vscroll(false)
+                .hscroll(false)
+                .resizable(false)
+                .fixed_size([400.0, 170.0])
+                .show(ctx, |ui| {
+                    self.line_chart.show(ui);
                 });
         });
     }
