@@ -49,19 +49,19 @@ impl DailyTable {
                         });
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
                             if stock.index_change > 0. {
-                                let text = format!("+{}%", stock.index_change);
+                                let text = format!("+{:.2}%", stock.index_change);
                                 ui.label(
                                     egui::RichText::new(text)
                                         .size(12.0)
-                                        .color(egui::Color32::GREEN),
+                                        .color(egui::Color32::RED),
                                 );
                             } else {
-                                let text = format!("{}%", stock.index_change);
+                                let text = format!("{:.2}%", stock.index_change);
                                 ui.label(
                                     egui::RichText::new(text)
                                         .size(12.0)
                                         .small()
-                                        .color(egui::Color32::RED),
+                                        .color(egui::Color32::LIGHT_BLUE),
                                 );
                             };
                         });

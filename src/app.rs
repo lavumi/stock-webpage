@@ -1,4 +1,4 @@
-use crate::modules::*;
+use crate::modals::*;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -14,22 +14,23 @@ impl Default for WrapApp {
         let pf_data = PortfolioRawData::new();
 
         let pie_chart_data: Vec<(f64, String)> = pf_data
-            .pie_chart
+            .holdings
             .iter()
-            .map(|data| (data.owned as f64 * data.price, data.symbol.to_string()))
+            .map(|data| (data.owned as f64 * data.close, data.symbol.to_string()))
             .collect();
 
         let pie_chart = PieChart::new("Percents", &pie_chart_data);
 
         let daily_table_data: Vec<(String, String, f64, f64)> = pf_data
-            .daily
+            .holdings
             .iter()
             .map(|data| {
+                let change = (data.close - data.open) / data.open * 100.0;
                 (
                     data.symbol.to_string(),
-                    data.index.to_string(),
-                    data.price,
-                    data.change,
+                    data.name.to_string(),
+                    data.close,
+                    change,
                 )
             })
             .collect();

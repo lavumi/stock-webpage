@@ -46,6 +46,12 @@ opt-level = 2
 
 [patch.crates-io]
 
+[build-dependencies]
+dotenv = "0.15.0"
+reqwest = { version = "0.12.4", features = ["json"] }
+tokio = { version = "1.0", features = ["full"] }
+
+
 # If you want to use the bleeding edge version of egui and eframe:
 # egui = { git = "https://github.com/emilk/egui", branch = "master" }
 # eframe = { git = "https://github.com/emilk/egui", branch = "master" }

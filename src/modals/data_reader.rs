@@ -2,25 +2,20 @@ use csv::ReaderBuilder;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PieChart {
+pub struct Stock {
     pub symbol: String,
     pub owned: u32,
-    pub price: f64,
     pub cost: f64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct DailyTable {
-    pub symbol: String,
-    pub index: String,
-    pub price: f64,
-    pub change: f64,
+    pub name: String,
+    pub close: f64,
+    pub highest: f64,
+    pub open: f64,
+    pub lowest: f64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PortfolioRawData {
-    pub pie_chart: Vec<PieChart>,
-    pub daily: Vec<DailyTable>,
+    pub holdings: Vec<Stock>,
 
     #[serde(skip_deserializing)]
     pub usd_krw: Vec<f64>,

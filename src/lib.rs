@@ -2,6 +2,6 @@
 
 mod app;
 
-mod modules;
+mod modals;
 
 pub use app::WrapApp;
