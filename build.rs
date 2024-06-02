@@ -3,6 +3,7 @@ use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 use std::env;
 use std::error::Error;
 use std::fs;
+use std::path::Path;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -24,8 +25,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let body = res.text().await?;
 
-    fs::create_dir_all("assets")?;
-    fs::write("assets/data.json", body)?;
+    let out_dir = match std::env::var("OUT_DIR") {
+        Ok(dir) => dir,
+        Err(e) => {
+            eprintln!("Error getting OUT_DIR: {}", e);
+            std::process::exit(1);
+        }
+    };
+    let dest_path = Path::new(&out_dir).join("data.json");
+    fs::write(dest_path, body)?;
 
     println!("Data saved to assets/data.json");
     Ok(())
