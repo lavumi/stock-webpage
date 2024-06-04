@@ -8,6 +8,8 @@ env:
   # https://rustwasm.github.io/docs/wasm-bindgen/web-sys/unstable-apis.html
   RUSTFLAGS: -D warnings --cfg=web_sys_unstable_apis
   RUSTDOCFLAGS: -D warnings
+  SUPABASE_TOKEN: ${{ secrets.SUPABASE_TOKEN }}
+
 
 jobs:
   check:
@@ -23,7 +25,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all-features
+          args: --all-features --verbose
 
   check_wasm:
     name: Check wasm32
@@ -105,12 +107,12 @@ jobs:
       - name: Build
         run: ./trunk build
 
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
+#  build:
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      fail-fast: true
+#      matrix:
+#        include:
 #        - os: macos-latest
 #          TARGET: aarch64-apple-darwin
 #
@@ -122,42 +124,44 @@ jobs:
 #
 #        - os: ubuntu-latest
 #          TARGET: armv7-unknown-linux-musleabihf
-
-        - os: ubuntu-latest
-          TARGET: x86_64-unknown-linux-musl
-
-    steps:
-    - name: Building ${{ matrix.TARGET }}
-      run: echo "${{ matrix.TARGET }}"
-
-    - uses: actions/checkout@master
-    - uses: actions-rs/toolchain@v1.0.1
-      with:
-        toolchain: stable
-        target: ${{ matrix.TARGET }}
-        override: true
-
-    - uses: actions-rs/cargo@v1
-      with:
-        use-cross: true
-        command: build
-        args: --verbose --release --target=${{ matrix.TARGET }}
-
-    - name: Rename
-      run: cp target/${{ matrix.TARGET }}/release/stock_portfolio${{ matrix.EXTENSION }} stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-
-    - uses: actions/upload-artifact@master
-      with:
-        name: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-        path: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-
-    - uses: svenstaro/upload-release-action@v2
-      name: Upload binaries to release
-      if: ${{ github.event_name == 'push' }}
-      with:
-        repo_token: ${{ secrets.ACTION_TOKEN }}
-        file: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-        asset_name: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-        tag: ${{ github.ref }}
-        prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        overwrite: true
+#
+#        - os: ubuntu-latest
+#          TARGET: x86_64-unknown-linux-musl
+#    steps:
+#    - name: Building ${{ matrix.TARGET }}
+#      run: echo "${{ matrix.TARGET }}"
+#
+#  # todo
+#  # https://github.com/sfackler/rust-openssl/issues/1667
+#  # sudo apt install libssl-dev
+#    - uses: actions/checkout@master
+#    - uses: actions-rs/toolchain@v1.0.1
+#      with:
+#        toolchain: stable
+#        target: ${{ matrix.TARGET }}
+#        override: true
+#
+#    - uses: actions-rs/cargo@v1
+#      with:
+#        use-cross: true
+#        command: build
+#        args: --verbose --release --target=${{ matrix.TARGET }}
+#
+#    - name: Rename
+#      run: cp target/${{ matrix.TARGET }}/release/stock_portfolio${{ matrix.EXTENSION }} stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+#
+#    - uses: actions/upload-artifact@master
+#      with:
+#        name: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+#        path: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+#
+#    - uses: svenstaro/upload-release-action@v2
+#      name: Upload binaries to release
+#      if: ${{ github.event_name == 'push' }}
+#      with:
+#        repo_token: ${{ secrets.ACTION_TOKEN }}
+#        file: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+#        asset_name: stock_portfolio-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+#        tag: ${{ github.ref }}
+#        prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
+#        overwrite: true
