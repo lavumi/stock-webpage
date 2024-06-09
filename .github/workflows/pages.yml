@@ -11,6 +11,9 @@ on:
 #     types:
 #       - published
 
+env:
+  SUPABASE_TOKEN: ${{ secrets.SUPABASE_TOKEN }}
+
 permissions:
   contents: write # for committing to gh-pages branch.
 
