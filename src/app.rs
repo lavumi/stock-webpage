@@ -16,7 +16,12 @@ impl Default for WrapApp {
         let pie_chart_data: Vec<(f64, String)> = pf_data
             .holdings
             .iter()
-            .map(|data| (data.owned as f64 * data.close, data.symbol.to_string()))
+            .map(|data| {
+                (
+                    data.owned as f64 * data.close_price,
+                    data.symbol.to_string(),
+                )
+            })
             .collect();
 
         let pie_chart = PieChart::new("Percents", &pie_chart_data);
@@ -25,11 +30,12 @@ impl Default for WrapApp {
             .holdings
             .iter()
             .map(|data| {
-                let change = (data.close - data.open) / data.open * 100.0;
+                let change =
+                    (data.close_price - data.yesterday_price) / data.yesterday_price * 100.0;
                 (
                     data.symbol.to_string(),
-                    data.name.to_string(),
-                    data.close,
+                    data.company_name.to_string(),
+                    data.close_price,
                     change,
                 )
             })

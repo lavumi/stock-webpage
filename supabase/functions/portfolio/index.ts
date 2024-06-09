@@ -1,15 +1,18 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 Deno.serve(async (_req) => {
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+  const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+  const apiKey = Deno.env.get('POLYGON_API_KEY')
+  const polygon_url = Deno.env.get('POLYGON_URL')
+
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    const apiKey = Deno.env.get('POLYGON_API_KEY')
-    const polygon_url = Deno.env.get('POLYGON_URL')
     const supabase = createClient(supabaseUrl, supabaseKey,{ global: { headers: { Authorization: _req.headers.get('Authorization')! } } })
     let { data: update_times, error } = await supabase
-    .from('holding')
-    .select('update_at, symbol')
+    .from('stocks')
+    .select('update_at, symbol, close_price')
 
     if (error) {
       throw error
@@ -18,6 +21,7 @@ Deno.serve(async (_req) => {
     for (let index = 0; index < update_times.length; index++) {
       let element = update_times[index];
       const symbol = element.symbol;
+      const yesterday_price = element.close_price;
       const update_at =new Date( element.update_at);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -33,28 +37,27 @@ Deno.serve(async (_req) => {
         throw res.statusText
       }
 
-      console.log(symbol, json);
       const updateJson = {
-        close : json['results'][0]['c'],
-        open :  json['results'][0]['o'],
-        highest : json['results'][0]['h'],
-        lowest : json['results'][0]['l'],
+        close_price : json['results'][0]['c'],
+        open_price :  json['results'][0]['o'],
+        highest_price : json['results'][0]['h'],
+        lowest_price : json['results'][0]['l'],
+        yesterday_price : yesterday_price,
         update_at : today
       }
 
 
-       await supabase.from('holding')
+       await supabase.from('stocks')
       .update(updateJson)
       .eq('symbol',symbol);
     
     }
 
 
-    let { data: holdings, what } = await supabase
-    .from('holding')
+    let { data: holdings, _ } = await supabase
+    .from('stocks')
     .select('*')
 
-    console.log(what);
     return new Response(JSON.stringify({holdings}), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,

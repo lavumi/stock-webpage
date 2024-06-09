@@ -6,11 +6,12 @@ pub struct Stock {
     pub symbol: String,
     pub owned: u32,
     pub cost: f64,
-    pub name: String,
-    pub close: f64,
-    pub highest: f64,
-    pub open: f64,
-    pub lowest: f64,
+    pub company_name: String,
+    pub close_price: f64,
+    pub highest_price: f64,
+    pub open_price: f64,
+    pub lowest_price: f64,
+    pub yesterday_price: f64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

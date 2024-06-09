@@ -1,0 +1,6 @@
+id,symbol,owned,cost,update_at,company_name,close_price,highest_price,open_price,lowest_price,yesterday_price
+4,MSFT,66,366.276,2024-06-09,Microsoft Corporation,423.85,426.28,426.2,423,0
+5,TSM,155,157.79,2024-06-09,Taiwan Semicondu...,164.39,166.12,163.57,161.96,0
+3,AMZN,90,147.57,2024-06-09,"Amazon.com, Inc.",184.3,186.289,184.9,183.36,0
+1,NVDA,43,493.112,2024-06-09,NVIDIA Corporation,1208.88,1216.92,1197.7,1180.22,0
+2,AAPL,90,118.255,2024-06-09,Apple Inc.,196.89,196.94,194.65,194.14,0
