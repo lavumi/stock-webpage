@@ -74,7 +74,7 @@ impl eframe::App for WrapApp {
         // Put your widgets into a `SidePanel`, `TopBottomPanel`, `CentralPanel`, `Window` or `Area`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            egui::menu::bar(ui, |ui| {
+            egui::menu::bar(ui, |_ui| {
                 // NOTE: no File->Quit on web pages!
                 // let is_web = cfg!(target_arch = "wasm32");
                 // if !is_web {
@@ -85,44 +85,49 @@ impl eframe::App for WrapApp {
                 //     });
                 //     ui.add_space(16.0);
                 // }
-                egui::widgets::global_dark_light_mode_switch(ui);
-                ui.separator();
+                // egui::widgets::global_dark_light_mode_switch(ui);
+                // ui.separator();
 
-                if ui.button("Organize windows").clicked() {
-                    ui.ctx().memory_mut(|mem| mem.reset_areas());
-                }
+                // if ui.button("Organize windows").clicked() {
+                //     ui.ctx().memory_mut(|mem| mem.reset_areas());
+                // }
             });
         });
 
         egui::CentralPanel::default().show(ctx, |_| {
-            egui::Window::new("chart")
-                .open(&mut true)
+            egui::Window::new("positions")
+                .title_bar(false)
+                // .frame(frame)
+                // .open(&mut true)
                 .collapsible(false)
                 .vscroll(false)
                 .hscroll(false)
                 .resizable(false)
-                .fixed_size([550.0, 400.0])
+                .fixed_size([400.0, 400.0])
+                .fixed_pos([20., 40.])
                 .show(ctx, |ui| {
                     self.pie_chart.show(ui);
                 });
 
             egui::Window::new("Daily")
-                .open(&mut true)
+                // .open(&mut true)
+                .title_bar(false)
                 .collapsible(false)
                 .vscroll(false)
                 .hscroll(false)
-                // .resizable(false)
-                .fixed_size([300.0, 400.0])
+                .fixed_pos([20., 470.])
+                .fixed_size([400.0, 400.0])
                 .show(ctx, |ui| {
                     self.daily_table.show(ui);
                 });
             egui::Window::new("Dollar")
+                .title_bar(false)
                 .open(&mut true)
                 .collapsible(false)
                 .vscroll(false)
                 .hscroll(false)
                 .resizable(false)
-                .fixed_size([400.0, 170.0])
+                // .fixed_size([400.0, 170.0])
                 .show(ctx, |ui| {
                     self.line_chart.show(ui);
                 });

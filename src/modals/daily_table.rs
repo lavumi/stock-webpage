@@ -34,18 +34,31 @@ impl DailyTable {
         }
     }
     pub fn show(&mut self, ui: &mut egui::Ui) {
+        ui.separator();
         for stock in &self.stocks {
             ui.columns(2, |columns| {
                 columns[0].horizontal(|ui| {
                     ui.vertical(|ui| {
-                        ui.label(egui::RichText::new(stock.market_name.clone()).size(16.0));
-                        ui.label(egui::RichText::new(stock.index_name.clone()).size(12.0));
+                        ui.label(
+                            egui::RichText::new(stock.market_name.clone())
+                                .size(16.0)
+                                .monospace(),
+                        );
+                        ui.label(
+                            egui::RichText::new(stock.index_name.clone())
+                                .size(12.0)
+                                .monospace(),
+                        );
                     });
                 });
                 columns[1].horizontal_wrapped(|ui| {
                     ui.vertical(|ui| {
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
-                            ui.label(egui::RichText::new(stock.index_value.clone()).size(16.0));
+                            ui.label(
+                                egui::RichText::new(stock.index_value.clone())
+                                    .size(16.0)
+                                    .monospace(),
+                            );
                         });
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
                             if stock.index_change > 0. {
@@ -53,7 +66,8 @@ impl DailyTable {
                                 ui.label(
                                     egui::RichText::new(text)
                                         .size(12.0)
-                                        .color(egui::Color32::RED),
+                                        .color(egui::Color32::RED)
+                                        .monospace(),
                                 );
                             } else {
                                 let text = format!("{:.2}%", stock.index_change);

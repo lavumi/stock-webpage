@@ -28,6 +28,7 @@ impl LineChart {
         };
     }
 
+    #[allow(unused)]
     pub fn show(&mut self, ui: &mut egui::Ui) {
         Plot::new(self.name.clone())
             .show_grid(false)

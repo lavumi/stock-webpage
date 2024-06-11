@@ -1,16 +1,18 @@
 use std::f64::consts::TAU;
 
-use egui::{Align2, RichText};
-use egui_plot::{Legend, Plot, PlotPoint, PlotPoints, Polygon, Text};
+use egui::{Align2, Color32, RichText, Stroke};
+use egui_plot::{Plot, PlotPoint, PlotPoints, Polygon, Text};
 
-const FULL_CIRCLE_VERTICES: f64 = 240.0;
+const FULL_CIRCLE_VERTICES: f64 = 120.0;
 const RADIUS: f64 = 1.0;
+const R_TAU: f64 = 1.0 / TAU;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 pub struct PieChart {
     name: String,
     sectors: Vec<Sector>,
+    color_preset: Vec<Color32>,
 }
 
 impl Default for PieChart {
@@ -44,9 +46,18 @@ impl PieChart {
             })
             .collect();
 
+        let color_preset = vec![
+            Color32::LIGHT_BLUE,
+            Color32::KHAKI,
+            Color32::LIGHT_RED,
+            Color32::LIGHT_YELLOW,
+            Color32::LIGHT_GREEN,
+            Color32::LIGHT_GRAY,
+        ];
         Self {
             name: name.as_ref().to_string(),
             sectors,
+            color_preset,
         }
     }
 
@@ -56,7 +67,6 @@ impl PieChart {
         Plot::new(&self.name)
             .label_formatter(|_: &str, _: &PlotPoint| String::default())
             .show_background(false)
-            .legend(Legend::default())
             .show_axes([false; 2])
             .allow_boxed_zoom(false)
             .allow_drag(false)
@@ -66,33 +76,29 @@ impl PieChart {
             .show_x(false)
             .show_y(false)
             .show_grid([false; 2])
-            // .set_margin_fraction([0.7; 2].into()) // this won't prevent the plot from moving
-            // `include_*` will lock it into place
-            // .include_x(-2.0)
-            // .include_x(2.0)
-            // .include_y(-2.0)
-            // .include_y(2.0)
             .show(ui, |plot_ui| {
-                for sector in sectors.into_iter() {
-                    let highlight = plot_ui
-                        .pointer_coordinate()
-                        .map(|p| sector.contains(&p))
-                        .unwrap_or_default();
-                    let Sector { name, points, .. } = sector;
+                for (index, sector) in sectors.into_iter().enumerate() {
+                    let Sector {
+                        name,
+                        points,
+                        center,
+                        percent,
+                        ..
+                    } = sector;
 
+                    let stroke = Stroke::new(1.0, self.color_preset[index]);
                     plot_ui.polygon(
                         Polygon::new(PlotPoints::new(points))
                             .name(&name)
-                            .highlight(highlight),
+                            .stroke(stroke),
                     );
-
-                    if highlight {
-                        let p = plot_ui.pointer_coordinate().unwrap();
-
-                        // TODO proper zoom
-                        let text = RichText::new(&name).size(15.0).heading();
-                        plot_ui.text(Text::new(p, text).name(&name).anchor(Align2::LEFT_BOTTOM));
-                    }
+                    let text = RichText::new(format!("{}\n{:.2}%", &name, percent))
+                        .monospace()
+                        .color(self.color_preset[index]);
+                    plot_ui.text(
+                        Text::new(PlotPoint::new(center[0], center[1]), text)
+                            .anchor(Align2::CENTER_CENTER),
+                    );
                 }
             });
     }
@@ -105,6 +111,8 @@ struct Sector {
     start: f64,
     end: f64,
     points: Vec<[f64; 2]>,
+    center: [f64; 2],
+    percent: f64,
 }
 
 impl Default for Sector {
@@ -129,14 +137,23 @@ impl Sector {
 
         points.push([RADIUS * end.sin(), RADIUS * end.cos()]);
 
+        let center = [
+            points[vertices / 2][0] * 0.66,
+            points[vertices / 2][1] * 0.66,
+        ];
+
+        let percent = (end - start) * R_TAU * 100.0;
         Self {
             name: name.as_ref().to_string(),
             start,
             end,
             points,
+            center,
+            percent,
         }
     }
 
+    #[allow(unused)]
     pub fn contains(&self, &PlotPoint { x, y }: &PlotPoint) -> bool {
         let r = y.hypot(x);
         let mut theta = x.atan2(y);
