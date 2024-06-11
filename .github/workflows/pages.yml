@@ -44,7 +44,7 @@ jobs:
         run: ./trunk build --release --public-url $public_url
         env:
 #          OUT_DIR: ${{ github.workspace }}/assets
-          public_url: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          public_url: "${{secrets.PUBLIC_URL}}"
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
