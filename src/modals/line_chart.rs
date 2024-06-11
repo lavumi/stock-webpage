@@ -1,5 +1,5 @@
 use eframe::emath::Vec2;
-use egui_plot::{Line, Plot};
+use egui_plot::{Legend, Line, Plot};
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -31,6 +31,7 @@ impl LineChart {
     #[allow(unused)]
     pub fn show(&mut self, ui: &mut egui::Ui) {
         Plot::new(self.name.clone())
+            .legend(Legend::default())
             .show_grid(false)
             .show_background(false)
             .set_margin_fraction(Vec2 { x: 0.1, y: 0.1 })
