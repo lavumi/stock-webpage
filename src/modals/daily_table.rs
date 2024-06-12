@@ -27,7 +27,6 @@ impl DailyTable {
                 stock.3,
             ))
         }
-        log::info!("{}", stocks.len());
         Self {
             name: name.as_ref().to_string(),
             stocks,

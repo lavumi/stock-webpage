@@ -1,14 +1,25 @@
 use crate::modals::*;
 use egui::scroll_area::ScrollBarVisibility;
-use egui::Context;
+use egui::{Context, RichText};
+use sha2::Digest;
 
-/// We derive Deserialize/Serialize so we can persist app state on shutdown.
+#[derive(serde::Deserialize, serde::Serialize)]
+enum AppState {
+    BeforeLogin = 0,
+    LoggedIn = 1,
+}
+
+/// We derive Deserialize/Serialize. so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct WrapApp {
     pie_chart: PieChart,
     daily_table: DailyTable,
     line_chart: LineChart,
+
+    app_state: AppState,
+    input_password: String,
+    stored_hash: String,
 }
 
 impl Default for WrapApp {
@@ -50,6 +61,10 @@ impl Default for WrapApp {
             pie_chart,
             daily_table,
             line_chart,
+            app_state: AppState::BeforeLogin,
+            input_password: "".to_string(),
+            stored_hash: "4ecdc4ec6c0e98bea7165bcb88f79d3a0a95461874705be912fa1d22abaa67ea"
+                .to_string(),
         }
     }
 }
@@ -95,6 +110,31 @@ impl WrapApp {
                 self.daily_table.show(ui);
             });
     }
+
+    fn login_view(&mut self, ctx: &Context, _: &mut egui::Ui) {
+        egui::Window::new("Login")
+            .collapsible(false)
+            .vscroll(false)
+            .hscroll(false)
+            .resizable(false)
+            .show(ctx, |ui| {
+                ui.label(RichText::new("Enter Password").monospace());
+                let text_edit =
+                    ui.add(egui::TextEdit::singleline(&mut self.input_password).password(true));
+                if text_edit.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+
+                    let mut hasher = sha2::Sha256::new();
+                    hasher.update(self.input_password.as_bytes());
+                    let result = hasher.finalize()  ;
+                    let hash_hex: String = result.iter().map(|byte| format!("{:02x}", byte)).collect();
+                    if hash_hex == self.stored_hash {
+                        self.app_state = AppState::LoggedIn;
+                    } else {
+                        self.input_password.clear();
+                    }
+                }
+            });
+    }
 }
 
 impl eframe::App for WrapApp {
@@ -127,11 +167,19 @@ impl eframe::App for WrapApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            if is_mobile {
-                self.mobile_view(ui);
-            } else {
-                self.desktop_view(ctx, ui);
+            match self.app_state {
+                AppState::BeforeLogin => {
+                    self.login_view(ctx, ui);
+                }
+                AppState::LoggedIn => {
+                    if is_mobile {
+                        self.mobile_view(ui);
+                    } else {
+                        self.desktop_view(ctx, ui);
+                    }
+                }
             }
+
             // egui::Window::new("Dollar")
             //     .title_bar(false)
             //     .collapsible(false)
@@ -144,22 +192,8 @@ impl eframe::App for WrapApp {
         });
     }
 
-    /// Called by the frame work to save state before shutdown.
+    /// Called by the framework to save state before shutdown.
     fn save(&mut self, _storage: &mut dyn eframe::Storage) {
         // eframe::set_value(storage, eframe::APP_KEY, self);
     }
 }
-
-// fn powered_by_egui_and_eframe(ui: &mut egui::Ui) {
-//     ui.horizontal(|ui| {
-//         ui.spacing_mut().item_spacing.x = 0.0;
-//         ui.label("Powered by ");
-//         ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-//         ui.label(" and ");
-//         ui.hyperlink_to(
-//             "eframe",
-//             "https://github.com/emilk/egui/tree/master/crates/eframe",
-//         );
-//         ui.label(".");
-//     });
-// }
