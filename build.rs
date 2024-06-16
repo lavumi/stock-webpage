@@ -3,13 +3,19 @@ use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 use std::env;
 use std::error::Error;
 use std::fs;
+use std::path::Path;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
 
-    let token = env::var("SUPABASE_TOKEN")?;
+    let dest_path = "./assets/data.json";
+    let path = Path::new(dest_path);
+    if path.exists() {
+        return Ok(());
+    }
 
+    let token = env::var("SUPABASE_TOKEN")?;
     let mut headers = HeaderMap::new();
     headers.insert("apikey", HeaderValue::from_str(&token)?);
     headers.insert(
@@ -26,7 +32,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let body = res.text().await?;
 
-    let dest_path = "./assets/data.json";
     fs::write(dest_path, body)?;
     Ok(())
 }

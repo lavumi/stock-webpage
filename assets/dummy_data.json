@@ -1,0 +1,123 @@
+{
+  "holdings": [
+    {
+      "id": 1,
+      "symbol": "GOOGL",
+      "owned": 43,
+      "cost": 2513.49,
+      "update_at": "2024-06-16",
+      "company_name": "Alphabet Inc.",
+      "close_price": 2725.67,
+      "highest_price": 2760.45,
+      "open_price": 2660.89,
+      "lowest_price": 2610.33,
+      "yesterday_price": 2700.24
+    },
+    {
+      "id": 2,
+      "symbol": "NFLX",
+      "owned": 121,
+      "cost": 453.78,
+      "update_at": "2024-06-16",
+      "company_name": "Netflix, Inc.",
+      "close_price": 501.34,
+      "highest_price": 515.67,
+      "open_price": 491.23,
+      "lowest_price": 485.96,
+      "yesterday_price": 530.75
+    },
+    {
+      "id": 3,
+      "symbol": "BABA",
+      "owned": 82,
+      "cost": 202.56,
+      "update_at": "2024-06-16",
+      "company_name": "Alibaba Group Holdi...",
+      "close_price": 223.45,
+      "highest_price": 228.90,
+      "open_price": 216.78,
+      "lowest_price": 212.34,
+      "yesterday_price": 221.89
+    },
+    {
+      "id": 4,
+      "symbol": "TSLA",
+      "owned": 53,
+      "cost": 658.23,
+      "update_at": "2024-06-16",
+      "company_name": "Tesla, Inc.",
+      "close_price": 705.89,
+      "highest_price": 729.54,
+      "open_price": 689.45,
+      "lowest_price": 665.67,
+      "yesterday_price": 702.34
+    },
+    {
+      "id": 5,
+      "symbol": "AMD",
+      "owned": 197,
+      "cost": 103.12,
+      "update_at": "2024-06-16",
+      "company_name": "Advanced Micro Dev...",
+      "close_price": 121.67,
+      "highest_price": 127.45,
+      "open_price": 118.34,
+      "lowest_price": 114.78,
+      "yesterday_price": 120.56
+    }
+  ],
+  "history" :[
+    {
+      "date" : "2022-01-01",
+      "balance" : 50000.00
+    },
+    {
+      "date" : "2023-01-01",
+      "balance" : 52750.45
+    },
+    {
+      "date" : "2024-01-01",
+      "balance" : 58420.89
+    },
+    {
+      "date" : "2024-03-01",
+      "balance" : 59160.23
+    },
+    {
+      "date" : "2024-04-01",
+      "balance" : 59680.15
+    },
+    {
+      "date" : "2024-05-01",
+      "balance" : 60745.76
+    },
+    {
+      "date" : "2024-06-01",
+      "balance" : 61532.58
+    },
+    {
+      "date" : "2024-06-11",
+      "balance" : 61850.37
+    },
+    {
+      "date" : "2024-06-12",
+      "balance" : 61920.12
+    },
+    {
+      "date" : "2024-06-13",
+      "balance" : 61987.34
+    },
+    {
+      "date" : "2024-06-14",
+      "balance" : 62023.77
+    },
+    {
+      "date" : "2024-06-15",
+      "balance" : 62115.28
+    },
+    {
+      "date" : "2024-06-16",
+      "balance" : 62234.99
+    }
+  ]
+}

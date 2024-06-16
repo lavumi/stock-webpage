@@ -63,18 +63,17 @@ impl PieChart {
 
     pub fn show(&mut self, ui: &mut egui::Ui) {
         let sectors = self.sectors.clone();
-
         Plot::new(&self.name)
-            .label_formatter(|_: &str, _: &PlotPoint| String::default())
             .show_background(false)
             .show_axes([false; 2])
             .allow_boxed_zoom(false)
             .allow_drag(false)
             .allow_zoom(false)
             .allow_scroll(false)
-            .data_aspect(1.0)
             .show_x(false)
             .show_y(false)
+            .view_aspect(1.0)
+            .data_aspect(1.0)
             .show_grid([false; 2])
             .show(ui, |plot_ui| {
                 for (index, sector) in sectors.into_iter().enumerate() {
