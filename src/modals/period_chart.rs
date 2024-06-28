@@ -56,8 +56,16 @@ impl PeriodChart {
         chart
     }
 
+    pub fn find_most_recent_date(&self) -> NaiveDate {
+        self.data
+            .iter()
+            .filter_map(|record| NaiveDate::parse_from_str(&record.date, "%Y-%m-%d").ok())
+            .max()
+            .unwrap_or(Local::now().date_naive())
+    }
+
     pub fn set_type(&mut self, period: Period) {
-        let today = Local::now().date_naive();
+        let today = self.find_most_recent_date();
         let mut target_date = vec![];
         target_date.push(today.to_string());
         for i in 0..6 {
