@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - main
-  schedule:
-    - cron: '0 0 * * 2,3,4,5,6'
+  # schedule:
+    # - cron: '0 0 * * 2,3,4,5,6'
 # to only run when you do a new github release, comment out above part and uncomment the below trigger.
 # on:
 #   release:
